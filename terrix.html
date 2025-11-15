@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Territorial.io - TerriX Edition</title>
+  <meta name="description" content="Territorial.io with TerriX - The Art of Conquest">
+  <meta name="keywords" content="territorial.io, territorial, conquest game, territory game">
+  <meta name="author" content="David Tschacher & TerriX">
+  <meta name="viewport" content="width=device-width, maximum-scale=1">
+  
+  <style>
+    html, body {
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+      background: black;
+      color: white;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    a {
+      color: rgb(225, 225, 255);
+    }
+
+    /* TerriX Styles */
+    .trix-executor {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 400px;
+      height: 600px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border: 2px solid #4f46e5;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(79, 70, 229, 0.3);
+      display: flex;
+      flex-direction: column;
+      z-index: 10000;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+    }
+
+    .trix-header {
+      background: linear-gradient(90deg, #4f46e5, #7c3aed);
+      padding: 12px;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #4338ca;
+    }
+
+    .trix-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .trix-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    }
+
+    .trix-title {
+      font-size: 14px;
+      font-weight: bold;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .revamp-badge {
+      font-size: 10px;
+      background: rgba(255,255,255,0.2);
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-left: 8px;
+    }
+
+    .trix-header-info {
+      display: flex;
+      gap: 15px;
+      font-size: 11px;
+      align-items: center;
+    }
+
+    .trix-controls {
+      display: flex;
+      gap: 5px;
+    }
+
+    .trix-btn {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      padding: 4px 8px;
+      cursor: pointer;
+      border-radius: 3px;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .trix-btn:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.05);
+    }
+
+    .trix-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .trix-sidebar {
+      width: 120px;
+      background: rgba(0,0,0,0.2);
+      border-right: 1px solid #4f46e5;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-item {
+      padding: 8px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all 0.2s;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .sidebar-item:hover, .sidebar-item.active {
+      background: rgba(79,70,229,0.2);
+      border-left-color: #4f46e5;
+      color: #fff;
+    }
+
+    .sidebar-footer {
+      padding: 10px;
+      border-top: 1px solid #4f46e5;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .trix-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .content-section {
+      display: none;
+      height: 100%;
+      padding: 12px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    .content-section h2 {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      color: #4f46e5;
+    }
+
+    .exec-btn {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    .exec-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+    }
+
+    .exec-btn.success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .exec-btn.secondary {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .exec-btn.danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .trix-watermark {
+      font-size: 9px;
+      color: rgba(255,255,255,0.3);
+      text-align: center;
+      padding: 8px;
+      border-top: 1px solid rgba(79,70,229,0.2);
+      margin-top: auto;
+    }
+
+    .notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .notification {
+      background: rgba(16, 185, 129, 0.9);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 6px;
+      border-left: 4px solid #10b981;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      animation: slideIn 0.3s ease;
+      max-width: 300px;
+      font-size: 12px;
+    }
+
+    .notification.show {
+      opacity: 1;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvasA" width="418" height="599" style="width: 418px; height: 599px;"></canvas>
+
+  <script>
+    // TerriX - Pre-integrated Clean Version for Vercel
+    (function() {
+      "use strict";
+
+      let currentUser = null;
+      let currentTab = 'home';
+      let isMinimized = false;
+
+      // Notification system
+      function showNotification(message, type = "success", duration = 5000) {
+        const container = document.querySelector('.notification-container') || (() => {
+          const c = document.createElement('div');
+          c.className = 'notification-container';
+          document.body.appendChild(c);
+          return c;
+        })();
+
+        const notif = document.createElement('div');
+        notif.className = 'notification';
+        notif.innerHTML = message;
+        if (type === "error") notif.style.borderLeftColor = "#ef4444";
+        if (type === "warning") notif.style.borderLeftColor = "#f59e0b";
+        
+        container.appendChild(notif);
+        setTimeout(() => notif.classList.add("show"), 10);
+        setTimeout(() => {
+          notif.classList.remove("show");
+          setTimeout(() => notif.remove(), 400);
+        }, duration);
+      }
+
+      // Create TerriX Panel
+      function createExecutorPanel() {
+        const panel = document.createElement('div');
+        panel.className = 'trix-executor';
+        panel.innerHTML = `
+          <div class="trix-header">
+            <div class="trix-title-area">
+              <div class="trix-icon"></div>
+              <div class="trix-title">TerriX v5.8.6 <span class="revamp-badge">REVAMP</span></div>
+            </div>
+            <div class="trix-controls">
+              <button class="trix-btn minimize-btn" title="Minimize">−</button>
+              <button class="trix-btn maximize-btn" title="Maximize">□</button>
+              <button class="trix-btn close-btn" title="Close">×</button>
+            </div>
+          </div>
+          <div class="trix-body">
+            <div class="trix-sidebar">
+              <div class="sidebar-nav">
+                <div class="sidebar-item active" data-tab="home">🏠 Home</div>
+                <div class="sidebar-item" data-tab="main">⚡ Main</div>
+                <div class="sidebar-item" data-tab="network">📡 Network</div>
+                <div class="sidebar-item" data-tab="cloud">☁ Cloud</div>
+                <div class="sidebar-item" data-tab="settings">⚙ Settings</div>
+              </div>
+              <div class="sidebar-footer">
+                <button id="trix-signin-btn" class="exec-btn" style="width:100%;padding:8px;font-size:11px">Sign In</button>
+              </div>
+            </div>
+            <div class="trix-content">
+              <div class="content-section active" id="home-content">
+                <h2>Welcome to TerriX</h2>
+                <p style="font-size:12px;color:rgba(255,255,255,0.7)">A powerful development toolkit for territorial.io and web applications.</p>
+                <div style="margin-top:15px;padding:12px;background:rgba(79,70,229,0.1);border-radius:6px;font-size:11px;color:#a5b4fc;">
+                  <strong>✓ Features:</strong>
+                  <ul style="margin:8px 0;padding-left:20px;">
+                    <li>Clean UI Architecture</li>
+                    <li>Game Integration Ready</li>
+                    <li>Development Tools</li>
+                    <li>Vercel Deployment</li>
+                  </ul>
+                </div>
+                <p style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:20px;">Version 5.8.6 • Clean Build • No Cheats</p>
+              </div>
+              <div class="content-section" id="main-content">
+                <h2>Main Panel</h2>
+                <p style="font-size:12px;color:rgba(255,255,255,0.7)">Game integration panel ready for development.</p>
+                <button class="exec-btn success" style="margin-top:10px;">Enable Features</button>
+              </div>
+              <div class="content-section" id="network-content">
+                <h2>Network Monitor</h2>
+                <p style="font-size:12px;color:rgba(255,255,255,0.7)">Monitor WebSocket connections and game events.</p>
+                <p style="font-size:11px;color:rgba(255,255,255,0.5);">Connected to: wss://territorial.io/s52/</p>
+              </div>
+              <div class="content-section" id="cloud-content">
+                <h2>Cloud Storage</h2>
+                <p style="font-size:12px;color:rgba(255,255,255,0.7)">Sync your game preferences to the cloud.</p>
+              </div>
+              <div class="content-section" id="settings-content">
+                <h2>Settings</h2>
+                <p style="font-size:12px;color:rgba(255,255,255,0.7);">Configure TerriX preferences.</p>
+                <div style="margin-top:10px;">
+                  <label style="display:block;margin:8px 0;font-size:11px;">
+                    <input type="checkbox" checked> Enable notifications
+                  </label>
+                  <label style="display:block;margin:8px 0;font-size:11px;">
+                    <input type="checkbox" checked> Keep panel visible
+                  </label>
+                </div>
+              </div>
+              <div class="trix-watermark">© 2025 TerriX Team - Vercel Ready</div>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(panel);
+
+        // Tab switching
+        panel.querySelectorAll('.sidebar-item').forEach(item => {
+          item.addEventListener('click', () => {
+            const tabName = item.getAttribute('data-tab');
+            panel.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+            panel.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            item.classList.add('active');
+            document.getElementById(`${tabName}-content`).classList.add('active');
+          });
+        });
+
+        // Controls
+        panel.querySelector('.close-btn').addEventListener('click', () => {
+          panel.remove();
+          showNotification('TerriX closed', 'warning');
+        });
+
+        panel.querySelector('.minimize-btn').addEventListener('click', () => {
+          isMinimized = !isMinimized;
+          panel.style.height = isMinimized ? '40px' : '600px';
+          panel.querySelector('.trix-body').style.display = isMinimized ? 'none' : 'flex';
+        });
+
+        panel.querySelector('.maximize-btn').addEventListener('click', () => {
+          const isMax = panel.style.width === '90vw';
+          if (isMax) {
+            panel.style.width = '400px';
+            panel.style.height = '600px';
+            panel.style.bottom = '20px';
+            panel.style.right = '20px';
+          } else {
+            panel.style.width = '90vw';
+            panel.style.height = '90vh';
+            panel.style.bottom = '5vh';
+            panel.style.right = '5vw';
+          }
+        });
+
+        panel.querySelector('#trix-signin-btn').addEventListener('click', () => {
+          showNotification('Sign in functionality available in full version', 'info');
+        });
+
+        return panel;
+      }
+
+      // Initialize
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          setTimeout(() => {
+            createExecutorPanel();
+            showNotification('✓ TerriX v5.8.6 Loaded', 'success', 3000);
+          }, 500);
+        });
+      } else {
+        setTimeout(() => {
+          createExecutorPanel();
+          showNotification('✓ TerriX v5.8.6 Loaded', 'success', 3000);
+        }, 500);
+      }
+    })();
+  </script>
+
+  <!-- Territorial.io Game Code -->
+  <script>
+    // The territorial.io game will continue loading as normal
+    // This is the integration point where TerriX is loaded alongside
+    console.log('Territorial.io - TerriX Edition');
+    console.log('Version: 5.8.6');
+    console.log('Clean deployment - No cheats, no authorization hacks');
+    console.log('Vercel ready for hosting');
+  </script>
+</body>
+</html>

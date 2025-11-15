@@ -1,0 +1,26 @@
+{
+  "name": "terrix",
+  "version": "5.8.6",
+  "description": "Territorial.io with pre-integrated TerriX - Clean version ready for Vercel deployment",
+  "author": "TerriX Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/terrix"
+  },
+  "keywords": [
+    "territorial",
+    "territorial.io",
+    "game",
+    "terrix",
+    "toolkit"
+  ],
+  "scripts": {
+    "serve": "python -m http.server 8000",
+    "dev": "python -m http.server 8000"
+  },
+  "vercelConfig": {
+    "buildCommand": "echo 'Static deployment'",
+    "outputDirectory": "."
+  }
+}
